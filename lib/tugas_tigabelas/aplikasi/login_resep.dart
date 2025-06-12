@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_tigasbelas_flutter/dbHelper/dbhelper_user.dart';
-import 'package:tugas_tigasbelas_flutter/model/user_model.dart';
-import 'package:tugas_tigasbelas_flutter/regis_resepmakanan.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/homepage_resep.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/list_resep.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/pendataan_resep.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/register_resep.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/dbhelper/dbhelper_user.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/model/model_user.dart';
 
 class LoginResepmakanan extends StatefulWidget {
   const LoginResepmakanan({super.key});
@@ -33,7 +36,6 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 "Welcome Back",
@@ -66,7 +68,7 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RegisResepmakanan()),
+                      MaterialPageRoute(builder: (context) => PendataanResep()),
                     );
                   },
                   child: Text(
@@ -85,7 +87,7 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final userData = await DBHelperUser.getUserByEmailAndPassword(
+                    final userData = await DbHelper.getEmailandPassword(
                       emailController.text,
                       passwordController.text,
                     );
@@ -94,6 +96,9 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Login successful")),
                       );
+                      Navigator.pushReplacement(
+                        context, 
+                        MaterialPageRoute(builder: (context) => HomepageResep()));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Email atau password salah")),

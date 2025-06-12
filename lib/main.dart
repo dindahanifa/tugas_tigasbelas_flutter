@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_tigasbelas_flutter/login_resepmakanan.dart';
-import 'package:tugas_tigasbelas_flutter/regis_resepmakanan.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/list_resep.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/login_resep.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/pendataan_resep.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/register_resep.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,6 +19,8 @@ class MyApp extends StatelessWidget {
         //Harus didaftarkan dulu disini
         "/": (context) => LoginResepmakanan(),
         "/RegisResepmakanan": (context) => RegisResepmakanan(),
+        "/PendataanResep": (context) => PendataanResep(),
+        "ListResep": (context) => ListResep(),
       },
       debugShowCheckedModeBanner: false,
       title: 'PPKD B 2',

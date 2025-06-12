@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_tigasbelas_flutter/login_resepmakanan.dart';
-import 'package:tugas_tigasbelas_flutter/dbHelper/dbhelper_user.dart';
-import 'package:tugas_tigasbelas_flutter/model/user_model.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/login_resep.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/dbhelper/dbhelper_user.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/model/model_user.dart';
+
 
 class RegisResepmakanan extends StatefulWidget {
   const RegisResepmakanan({super.key});
@@ -116,7 +117,7 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
                         print("Username: ${usernameController.text}");
                         print("Phone: ${phoneController.text}");
                         print("Password: ${passwordController.text}");
-                        DBHelperUser.insertUser(
+                        DbHelper.insertUser(
                          UserModel(
                             email: emailController.text,
                             password: passwordController.text,
@@ -131,7 +132,10 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
                             backgroundColor: Colors.green,
                           ),
                         );
-                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context, 
+                          MaterialPageRoute(builder: (context) => LoginResepmakanan(),
+                          ));
                       }
                     },
                     style: ElevatedButton.styleFrom(
