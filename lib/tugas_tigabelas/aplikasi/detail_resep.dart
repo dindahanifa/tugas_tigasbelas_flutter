@@ -15,6 +15,12 @@ class DetailResep extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 50),
+            Center(
+              child: Text(
+                '${resep.judul ?? '-'}', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+            ),
             SizedBox(height: 16),
             Text(
               'Kategori: ${resep.kategori ?? '-'}',
@@ -27,10 +33,14 @@ class DetailResep extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(resep.deskripsi ?? '-'),
+            SizedBox(height: 20),
+            Text('Bahan-Bahan',style: TextStyle(fontWeight: FontWeight.bold),),
             SizedBox(height: 10),
-            Text(resep.langkah ?? '-'),
-            SizedBox(height: 8),
             Text(resep.bahan ?? '-'),
+            SizedBox(height: 10),
+            Text('Langkah-Langkah', style: TextStyle(fontWeight: FontWeight.bold),),
+            SizedBox(height: 8),
+            Text(resep.langkah ?? '-'),
           ],
         ),
       ),

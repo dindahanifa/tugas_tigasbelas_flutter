@@ -20,6 +20,7 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,47 +42,47 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
               // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "Register",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  "Pendaftaran",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 height(12),
                 Text(
-                  "Register your account",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  "Daftarkan akun anda",
+                  style: TextStyle(fontSize: 14, color: Colors.black),
                 ),
                 height(24),
                 buildTitle("Email Address"),
                 height(12),
                 buildTextField(
-                  hintText: "Enter your email",
+                  hintText: "Masukan email",
                   controller: emailController,
                 ),
                 height(16),
                 buildTitle("Nama"),
                 height(12),
                 buildTextField(
-                  hintText: "Enter your name",
+                  hintText: "Nama kamu",
                   controller: nameController,
                 ),
                 height(16),
                 buildTitle("Username"),
                 height(12),
                 buildTextField(
-                  hintText: "Enter your username",
+                  hintText: "Username kamu",
                   controller: usernameController,
                 ),
                 height(16),
-                buildTitle("Phone Number"),
+                buildTitle("Nomor Hp"),
                 height(12),
                 buildTextField(
-                  hintText: "Enter your phone number",
+                  hintText: "Masukan nomor hp",
                   controller: phoneController,
                 ),
                 height(16),
-                buildTitle("Password"),
+                buildTitle("Kata sandi"),
                 height(12),
                 buildTextField(
-                  hintText: "Enter your password",
+                  hintText: "Masukan kata sandi",
                   isPassword: true,
                   controller: passwordController,
                 ),
@@ -96,10 +97,10 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
                       );
                     },
                     child: Text(
-                      "Forgot Password?",
+                      "Lupa kata sandi?",
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.deepOrange,
+                        color:Colors.black,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -128,7 +129,7 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text("Registration Successful!"),
+                            content: Text("Pendaftaran berhasil"),
                             backgroundColor: Colors.green,
                           ),
                         );
@@ -145,7 +146,7 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
                       ),
                     ),
                     child: Text(
-                      "Register",
+                      "Pendaftaran",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -160,7 +161,7 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Have an account?",
+                      "Memiliki akun?",
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     TextButton(
@@ -190,7 +191,7 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      color: Colors.white,
+      color: Color(0xffffaaaa),
     );
   }
 
@@ -203,7 +204,7 @@ class _RegisResepmakananState extends State<RegisResepmakanan> {
       controller: controller,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter some text';
+          return 'Tidak boleh kosong';
         }
         return null;
       },

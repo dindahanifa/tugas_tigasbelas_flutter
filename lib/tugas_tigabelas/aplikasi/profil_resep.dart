@@ -30,25 +30,6 @@ class _ProfilResepState extends State<ProfilResep> {
           "din_haf",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add_outlined),
-            onPressed: () {
-              showMenu(
-                context: context, 
-                position: RelativeRect.fromLTRB(1000, 80, 0, 0),
-                items: [
-                  PopupMenuItem(child: Text('Reel')),
-                  PopupMenuItem(child: Text('Posting')),
-                  PopupMenuItem(child: Text('Cerita')),
-                  PopupMenuItem(child: Text('Sorotan Cerita')),
-                  PopupMenuItem(child: Text('Siaran Langsung')),
-                  PopupMenuItem(child: Text('Iklan')),
-                  PopupMenuItem(child: Text('Saluran')),
-                ]);
-            },
-            ),
-        ],
       ),
 
 // Foto
@@ -93,7 +74,7 @@ class _ProfilResepState extends State<ProfilResep> {
                       Padding(padding: EdgeInsets.only(left: 90, top: 25)),
                       Text('Resep', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                       SizedBox(height: 5,),
-                      Text('0', style: TextStyle(color: Colors.white),),
+                      Text('0', style: TextStyle(color: Colors.black),),
                         ]
                       )
                     ],

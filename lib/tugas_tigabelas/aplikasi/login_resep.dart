@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/homepage_resep.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/list_resep.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/pendataan_resep.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/register_resep.dart';
@@ -19,6 +19,7 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,27 +38,23 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              height(75),
               Text(
-                "Welcome Back",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              height(12),
-              Text(
-                "Login to access your account",
-                style: TextStyle(fontSize: 14, color: Colors.black),
+                "Masuk untuk mengakses akun anda",
+                style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
               ),
               height(24),
               buildTitle("Email Address"),
               height(12),
               buildTextField(
-                hintText: "Enter your email",
+                hintText: "Alamat email", 
                 controller: emailController,
               ),
               height(16),
-              buildTitle("Password"),
+              buildTitle("Kata sandi"),
               height(12),
               buildTextField(
-                hintText: "Enter your password",
+                hintText: "Masukan kata sandi",
                 isPassword: true,
                 controller: passwordController,
               ),
@@ -72,10 +69,10 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
                     );
                   },
                   child: Text(
-                    "Forgot Password?",
+                    "Lupa password?",
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.orangeAccent,
+                      color: Colors.black,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -93,15 +90,19 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
                     );
                     if (userData != null) {
                      print('data ada: ${userData.toMap()}');
+                     final prefs = await SharedPreferences.getInstance();
+                     await prefs.setString('nama', userData.name ?? '');
+                     await prefs.setString('email', userData.email);
+
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Login successful")),
+                        SnackBar(content: Text("Login berhasil")),
                       );
                       Navigator.pushReplacement(
                         context, 
-                        MaterialPageRoute(builder: (context) => HomepageResep()));
+                        MaterialPageRoute(builder: (context) => ListResep()));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Email atau password salah")),
+                        SnackBar(content: Text("Email atau Kata sandi salah")),
                       );
                     }
                   },
@@ -133,13 +134,12 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
                     ),
                   ),
                   Text(
-                    "Or Sign In With",
-                    style: TextStyle(fontSize: 12, color: Colors.black),
+                    "Atau mendaftar melalui",
+                    style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.only(left: 8),
-
                       height: 1,
                       color: Colors.white,
                     ),
@@ -176,8 +176,8 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Don't have an account?",
-                    style: TextStyle(fontSize: 12, color: Colors.black),
+                    "Tidak memiliki akun?",
+                    style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   TextButton(
                     onPressed: () {
@@ -205,7 +205,10 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      color: Colors.white
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/image/abc.png'), fit: BoxFit.cover)
+      ),
     );
   }
 

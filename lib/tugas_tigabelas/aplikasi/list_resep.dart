@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/detail_resep.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/login_resep.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/pendataan_resep.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/profil_resep.dart';
-import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/homepage_resep.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/register_resep.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/dbhelper/dbhelper_resep.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/model/model_resep.dart';
@@ -16,6 +17,8 @@ class ListResep extends StatefulWidget {
 
 class _ListResepState extends State<ListResep> {
   List<Resep> daftarResep = [];
+  String? nama;
+  String? email;
 
   @override
   Future<void> muatData() async {
@@ -29,20 +32,29 @@ class _ListResepState extends State<ListResep> {
   void initState() {
     muatData();
     super.initState();
-    
+    loadUserData();
+  }
+
+  void loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nama = prefs.getString('nama') ?? 'Nama Pengguna';
+      email = prefs.getString('email') ?? 'eamil@contoh.com';
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Center(
-          child: Image.asset("assets/image/always.png"),
-        ),
+        backgroundColor: Color(0xffFAAAA),
+        leading: Builder(
+          builder: (context)=> IconButton(
+            onPressed: () => Scaffold.of(context).openDrawer(),
+            icon: Icon(Icons.menu),
+            )),
         actions: [IconButton(
-          icon: Icon(Icons.add, color: Colors.white),
+          icon: Icon(Icons.add, color: Colors.black),
           onPressed: () async {
             await Navigator.push(
               context,
@@ -52,9 +64,51 @@ class _ListResepState extends State<ListResep> {
             );
             await muatData();
           },
-        ),]
+        ),],
       ),
-      backgroundColor: Colors.white,
+      drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  UserAccountsDrawerHeader(
+                    decoration: BoxDecoration(color: Color(0xffFFAAAA)),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundImage: AssetImage('assets/image/koki.jpg'),
+                    ),
+                    accountName: Text(nama ?? ''), 
+                    accountEmail: Text(email ?? '')
+                    ),
+              ListTile(
+                leading: Icon(Icons.person, color: Colors.black,),
+                title: Text('Profil',style: TextStyle(fontSize: 20)),
+                onTap: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context)=> ProfilResep()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.alarm, color: Colors.black,),
+                title: Text('Resep terakhir diliat',style: TextStyle(fontSize: 20)),
+              ),
+              ListTile(
+                leading: Icon(Icons.settings, color: Colors.black,),
+                title: Text('Pengaturan',style: TextStyle(fontSize: 20)),
+              ),  
+              ListTile(
+                leading: Icon(Icons.key, color: Colors.black,),
+                title: Text('Keluar',style: TextStyle(fontSize: 20)),
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(
+                    context, 
+                    MaterialPageRoute(builder: (context)=> LoginResepmakanan()), 
+                    (Route)=> false);
+                },
+              ),   
+          ],
+        ),
+      ),
+      backgroundColor: Color(0xffFFAAAA),
       body: daftarResep.isEmpty
           ? Center(child: Text("Belum ada resep"))
           : ListView.builder(
