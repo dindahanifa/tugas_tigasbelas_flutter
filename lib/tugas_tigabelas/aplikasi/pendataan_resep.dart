@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/dbhelper/dbhelper_resep.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/model/model_resep.dart';
-import 'package:tugas_tigasbelas_flutter/tugas_tigabelas/aplikasi/login_resep.dart';
 
 class PendataanResep extends StatefulWidget {
-  final Resep? resep; 
+  final Resep? resep;
 
   PendataanResep({this.resep});
 
@@ -22,12 +21,9 @@ class _PendataanResepState extends State<PendataanResep> {
   final TextEditingController langkahLangkahController = TextEditingController();
   final TextEditingController kategoriController = TextEditingController();
 
-  List<Resep> daftarResep = [];
-
   @override
   void initState() {
     super.initState();
-    muatData();
     if (widget.resep != null) {
       final resep = widget.resep!;
       namaResepController.text = resep.judul;
@@ -39,6 +35,17 @@ class _PendataanResepState extends State<PendataanResep> {
     }
   }
 
+  @override
+  void dispose() {
+    namaResepController.dispose();
+    gambarController.dispose();
+    deskripsiController.dispose();
+    bahanBahanController.dispose();
+    langkahLangkahController.dispose();
+    kategoriController.dispose();
+    super.dispose();
+  }
+
   void _resetForm() {
     _formKey.currentState!.reset();
     namaResepController.clear();
@@ -47,14 +54,6 @@ class _PendataanResepState extends State<PendataanResep> {
     bahanBahanController.clear();
     langkahLangkahController.clear();
     kategoriController.clear();
-  }
-
-  Future<void> muatData() async {
-    final data = await DbhelperResep.getAllResep();
-    setState(() {
-      daftarResep.clear();
-      daftarResep.addAll(data);
-    });
   }
 
   Future<void> simpanData() async {
@@ -72,13 +71,12 @@ class _PendataanResepState extends State<PendataanResep> {
       if (widget.resep == null) {
         await DbhelperResep.insertResep(newResep);
         _showDialog("Berhasil", "Resep berhasil disimpan.");
+        _resetForm();
       } else {
         final updatedResep = newResep.copyWith(id: widget.resep!.id);
         await DbhelperResep.updateResep(updatedResep);
-        _showDialog("Berhasil", "Resep berhasil diperbarui.");
+        Navigator.pop(context, true);
       }
-
-      _resetForm();
     }
   }
 
@@ -108,7 +106,8 @@ class _PendataanResepState extends State<PendataanResep> {
       child: TextFormField(
         controller: controller,
         maxLines: maxLines,
-        validator: (value) => value == null || value.isEmpty ? 'Tidak boleh kosong' : null,
+        validator: (value) =>
+            value == null || value.isEmpty ? 'Tidak boleh kosong' : null,
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(),
@@ -130,11 +129,22 @@ class _PendataanResepState extends State<PendataanResep> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                _buildTextField(label: "Judul Resep", controller: namaResepController),
-                _buildTextField(label: "URL Gambar", controller: gambarController),
-                _buildTextField(label: "Deskripsi", controller: deskripsiController, maxLines: 3),
-                _buildTextField(label: "Bahan-bahan", controller: bahanBahanController, maxLines: 3),
-                _buildTextField(label: "Langkah-langkah", controller: langkahLangkahController, maxLines: 3),
+                _buildTextField(
+                    label: "Judul Resep", controller: namaResepController),
+                _buildTextField(
+                    label: "URL Gambar", controller: gambarController),
+                _buildTextField(
+                    label: "Deskripsi",
+                    controller: deskripsiController,
+                    maxLines: 3),
+                _buildTextField(
+                    label: "Bahan-bahan",
+                    controller: bahanBahanController,
+                    maxLines: 3),
+                _buildTextField(
+                    label: "Langkah-langkah",
+                    controller: langkahLangkahController,
+                    maxLines: 3),
                 _buildTextField(label: "Kategori", controller: kategoriController),
                 SizedBox(height: 16),
                 ElevatedButton(

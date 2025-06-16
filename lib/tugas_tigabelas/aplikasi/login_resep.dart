@@ -93,6 +93,7 @@ class _LoginResepmakananState extends State<LoginResepmakanan> {
                      final prefs = await SharedPreferences.getInstance();
                      await prefs.setString('nama', userData.name ?? '');
                      await prefs.setString('email', userData.email);
+                     await prefs.setString('username', userData.username?? '');
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Login berhasil")),
