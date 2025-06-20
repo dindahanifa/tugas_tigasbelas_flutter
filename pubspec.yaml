@@ -33,7 +33,8 @@ dependencies:
   sqflite: ^2.3.2+1
   path: ^1.8.3
   shared_preferences: ^2.5.3
-  http: ^0.13.6
+  http: ^1.2.2
+  cached_network_image: ^3.4.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -71,6 +72,7 @@ flutter:
   - assets/image/abc.png
   - assets/image/cde.png
   - assets/image/fgh.png
+  - assets/image/hello.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
