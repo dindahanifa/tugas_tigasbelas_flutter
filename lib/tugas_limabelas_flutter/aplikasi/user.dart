@@ -1,11 +1,11 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_limabelas_flutter/api/api_login.dart';
-import 'package:tugas_tigasbelas_flutter/tugas_limabelas_flutter/model/model_regis.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_limabelas_flutter/aplikasi/profil.dart';
+import 'package:tugas_tigasbelas_flutter/tugas_limabelas_flutter/helper.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_limabelas_flutter/shared_preferences.dart';
-import 'package:tugas_tigasbelas_flutter/tugas_limabelas_flutter/model/model_register_error.dart';
-import 'package:tugas_tigasbelas_flutter/tugas_limabelas_flutter/model/model_authresponse.dart';
-
 
 class Limabelas extends StatefulWidget {
   const Limabelas({super.key});
@@ -22,37 +22,78 @@ class _LimabelasState extends State<Limabelas> {
 
   bool isSignIn = true;
   bool _obscurePassword = true;
-  bool isLoading = true;
-  bool _isEmailValid(String email) {
-  final regex = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
-  return regex.hasMatch(email);
-}
+  bool isLoading = false;
 
-  Future<void> saveToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('jwt_token', token);
+  bool _isEmailValid(String email) {
+    final regex = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+    return regex.hasMatch(email);
   }
 
   void _handleSignIn() async {
     setState(() => isLoading = true);
 
-    if (_usernameController.text.isEmpty || _passwordController.text.isEmpty) {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Username dan Password tidak boleh kosong.')),
+        SnackBar(
+          content: Text(
+            'Username dan Password tidak boleh kosong.',
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+        ),
       );
       setState(() => isLoading = false);
       return;
     }
 
-    final loginRequest = await UserService().login(
-       _usernameController.text,
-      _passwordController.text,
-    );
-    if (loginRequest["data"]!=null){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Login berhasil!")));
-    } else if (loginRequest["Maaf, ${loginRequest["message"]}"])
-    {};
-  } 
+    try {
+      final loginRequest = await userService.login(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (loginRequest["data"] != null) {
+        final token = loginRequest["data"]['token'];
+        final user = loginRequest["data"]['user'];
+
+        PreferenceHandler.saveToken(token);
+
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('nama', user['nama']);
+        prefs.setString('email', user['email']);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Login berhasil!"),
+            backgroundColor: Colors.white,
+          ),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilScreen()),
+        );
+      } else if (loginRequest["errors"] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Maaf, ${loginRequest["message"]}"),
+            backgroundColor: Colors.white,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Terjadi kesalahan: $e"),
+          backgroundColor: Colors.white,
+        ),
+      );
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   void _handleSignUp() async {
     if (_usernameController.text.isEmpty ||
@@ -65,34 +106,55 @@ class _LimabelasState extends State<Limabelas> {
     }
 
     if (!_isEmailValid(_emailController.text)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Format email tidak valid')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Format email tidak valid')),
+      );
+      return;
     }
 
-    final RegisterRequest = await UserService().register(
-       _usernameController.text,
-       _emailController.text,
-      _passwordController.text,
-    );
-    if (RegisterRequest["data"] !=null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Register berhasil!")));
-    } else if (RegisterRequest["errors"]!=null){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Maaf, ${RegisterRequest["message"]}")));
-    } 
-      setState(() {
-        isSignIn = true;
-        _usernameController.clear();
-        _emailController.clear();
-        _passwordController.clear();
-      });
-    }
-    @override
-    void dispose() {
-      _usernameController.dispose();
-      _emailController.dispose();
-      _passwordController.dispose();
-      super.dispose();
-    }
+    try {
+      final registerRequest = await userService.register(
+        _emailController.text,
+        _usernameController.text,
+        _passwordController.text,
+      );
 
+      if (registerRequest["data"] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Register berhasil!",
+              style: TextStyle(color: Colors.black)),
+          backgroundColor: Colors.white,
+        ));
+        Future.delayed(Duration(seconds: 1), () {
+          setState(() {
+            isSignIn = true;
+            _usernameController.clear();
+            _emailController.clear();
+            _passwordController.clear();
+          });
+        });
+      } else if (registerRequest["errors"] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Maaf, ${registerRequest["message"]}",
+              style: TextStyle(color: Colors.black)),
+          backgroundColor: Colors.white,
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Terjadi kesalahan: $e"),
+        backgroundColor: Colors.white,
+      ));
+    }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,49 +193,20 @@ class _LimabelasState extends State<Limabelas> {
     );
   }
 
-  Widget _buildLinkedCirclesIcon() {
-    return Container(
-      width: 150,
-      height: 150,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white,
-            offset: Offset(-3, -3),
-            blurRadius: 5,
-            spreadRadius: 1,
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            offset: Offset(3, 3),
-            blurRadius: 5,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                isSignIn = true;
-              });
-            },
-            child: _buildTapButton('SIGN IN', isSignIn),
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                isSignIn = false;
-              });
-            },
-            child: _buildTapButton('SIGN UP', !isSignIn),
-          ),
-        ],
-      ),
+  Widget _buildAuthTabs() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onTap: () => setState(() => isSignIn = true),
+          child: _buildTapButton('SIGN IN', isSignIn),
+        ),
+        SizedBox(width: 20),
+        GestureDetector(
+          onTap: () => setState(() => isSignIn = false),
+          child: _buildTapButton('SIGN UP', !isSignIn),
+        ),
+      ],
     );
   }
 
@@ -208,8 +241,8 @@ class _LimabelasState extends State<Limabelas> {
     );
   }
 
-  Widget _buildInputField(
-      IconData icon, String hintText, bool isPassword, TextEditingController controller) {
+  Widget _buildInputField(IconData icon, String hintText, bool isPassword,
+      TextEditingController controller) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: BoxDecoration(
@@ -247,7 +280,9 @@ class _LimabelasState extends State<Limabelas> {
                     });
                   },
                   icon: Icon(
-                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                    _obscurePassword
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                     color: Colors.white.withOpacity(0.7),
                   ),
                 )
@@ -260,11 +295,11 @@ class _LimabelasState extends State<Limabelas> {
   Widget _buildSignForm() {
     return Column(
       children: [
-        _buildInputField(Icons.person, 'Username', false, _usernameController),
+        _buildInputField(Icons.person, 'Email', false, _emailController),
         SizedBox(height: 20),
         _buildInputField(Icons.lock, 'Password', true, _passwordController),
         SizedBox(height: 40),
-        _buildAuthButton('SIGN IN', () => _handleSignIn()),
+        _buildAuthButton('SIGN IN', _handleSignIn),
       ],
     );
   }
@@ -278,7 +313,7 @@ class _LimabelasState extends State<Limabelas> {
         SizedBox(height: 20),
         _buildInputField(Icons.lock, 'Password', true, _passwordController),
         SizedBox(height: 40),
-        _buildAuthButton('SIGN UP', () => _handleSignUp()),
+        _buildAuthButton('SIGN UP', _handleSignUp),
       ],
     );
   }
@@ -309,27 +344,10 @@ class _LimabelasState extends State<Limabelas> {
         ),
         child: Text(
           text,
-          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
-
-  Widget _buildAuthTabs() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: () => setState(() => isSignIn = true),
-          child: _buildTapButton('SIGN IN', isSignIn),
-        ),
-        SizedBox(width: 20),
-        GestureDetector(
-          onTap: () => setState(() => isSignIn = false),
-          child: _buildTapButton('SIGN UP', !isSignIn),
-        ),
-      ],
-    );
-  }
-
 }
