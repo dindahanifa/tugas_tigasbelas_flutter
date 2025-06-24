@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:http/retry.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tugas_tigasbelas_flutter/tugas_limabelas_flutter/helper.dart';
@@ -63,6 +64,34 @@ class UserService {
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
+      },
+    );
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return profileResponseFromJson(response.body).toJson();
+    } else if (response.statusCode == 422) {
+      return registerErrorFromJson(response.body).toJson();
+    } else {
+      print("Gagal memuat profil: ${response.statusCode}");
+      throw Exception("Gagal memuat profil: ${response.statusCode}");
+    }
+  }
+
+  Future<Map<String, dynamic>> updateProfile(String name) async {
+    String? token = await PreferenceHandler.getToken();
+    if (token == null){
+      throw  Exception('Token tidak ditemukan, silahkan login ulang');
+    }
+    final response = await http.put(
+      Uri.parse('$baseUrl/profile'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        
+      },
+       body: {
+        'name': name,
       },
     );
     print(response.body);

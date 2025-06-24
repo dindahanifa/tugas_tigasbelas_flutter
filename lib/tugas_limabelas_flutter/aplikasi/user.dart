@@ -59,12 +59,13 @@ class _LimabelasState extends State<Limabelas> {
         PreferenceHandler.saveToken(token);
 
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString('nama', user['nama']);
+        prefs.setString('nama', user['name']);
         prefs.setString('email', user['email']);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Login berhasil!"),
+            content: Text("Login berhasil!",
+            style: TextStyle(color: Colors.black)),
             backgroundColor: Colors.white,
           ),
         );
@@ -100,14 +101,16 @@ class _LimabelasState extends State<Limabelas> {
         _emailController.text.isEmpty ||
         _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Semua kolom tidak boleh kosong.')),
+        SnackBar(content: Text('Semua kolom tidak boleh kosong.',
+            style: TextStyle(color: Colors.black))),
       );
       return;
     }
 
     if (!_isEmailValid(_emailController.text)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Format email tidak valid')),
+        SnackBar(content: Text('Format email tidak valid',
+            style: TextStyle(color: Colors.black))),
       );
       return;
     }
